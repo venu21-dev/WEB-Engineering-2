@@ -11,67 +11,96 @@
   </div>
 
   <script>
-    const app = Vue.createApp({
-    template: 
+    const { reactive, createApp } = Vue;
 
-    `
-    <h1>{{ title }}</h1>
-    <div class="inputContainer">
-        <input v-model="newItem" type="text" id="inputSearch" placeholder="Produkt">
-        <button @click="addItem">Hinzufügen</button>
-        <p>{{ newItem }}</p>
-    </div>  
-    
-    <div class="shopListItem" v-for="(item, index) in items" :key="index">
-        <h1>{{item}}</h1>
-        <button @click="removeItem(index)">löschen</button>
-    </div>
-    
-    `,
-    data() {
-        return {
-        title: "Einkaufsliste",
-        items: ["Milch", "Brot"],
-        newItem: ""
-    }
-    },
+    createApp({
+      setup() {
+        // 1) State (reactive)
+        const state = reactive({
+          title: "Einkaufsliste",
+          items: ["Milch", "Brot"],
+          newItem: ""
+        });
 
-    methods: {
-        addItem(){
-            const value = this.newItem.trim()
-            if (!value) return
-            this.items.push(value)
-            this.newItem = ""
-        },
-
-        removeItem(index){
-            this.items.splice(index, 1)
+        // 2) Methoden (normale Funktionen)
+        function addItem() {
+          const value = state.newItem.trim();
+          if (!value) return;
+          state.items.push(value);
+          state.newItem = "";
         }
-    }
 
-});
-    
-    app.mount('#app');
+        function removeItem(index) {
+          state.items.splice(index, 1);
+        }
 
+        // 3) Alles was im Template benutzt wird, muss returned werden
+        return {
+          state,
+          addItem,
+          removeItem
+        };
+      },
+
+      template: `
+        <h1>{{ state.title }}</h1>
+
+        <div class="inputContainer">
+          <input
+            v-model="state.newItem"
+            type="text"
+            id="inputSearch"
+            placeholder="Produkt"
+            @keyup.enter="addItem"
+          >
+          <button @click="addItem">Hinzufügen</button>
+          <p>{{ state.newItem }}</p>
+        </div>
+
+        <ul>
+          <li
+            class="shopListItem"
+            v-for="(item, index) in state.items"
+            :key="index"
+          >
+            <span>{{ item }}</span>
+
+            <!-- v-if (wie im Blatt erwähnt) -->
+            <span v-if="true" style="cursor:pointer;" @click="removeItem(index)">x</span>
+          </li>
+        </ul>
+      `
+    }).mount('#app');
   </script>
 
-
-  <style>
+ <style>
     .shopListItem{
-        background-color: rgba(0, 0, 0, 0.05);
-        margin: 25px;
-        padding: 10px;
-        border-radius: 10px;
-
+      background-color: rgba(0, 0, 0, 0.05);
+      margin: 25px;
+      padding: 10px;
+      border-radius: 10px;
+      display:flex;
+      justify-content: space-between;
+      align-items:center;
     }
 
     #inputSearch{
-        background-color: rgba(0, 0, 0, 0.1);
-        margin: 25px;
-        padding: 10px;
-        border-radius: 8px;
+      background-color: rgba(0, 0, 0, 0.1);
+      margin: 25px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 0;
+      outline: none;
+    }
+
+    .inputContainer{
+      display:flex;
+      gap:10px;
+      align-items:center;
     }
   </style>
 
 </body>
 </html>
+
+
