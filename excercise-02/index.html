@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Einfache Einkaufsliste</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- Hier wird die Einkaufsliste angezeigt -->
+  </div>
+
+  <script>
+    const app = Vue.createApp({
+    template: 
+
+    `
+    <h1>{{ title }}</h1>
+    <div class="inputContainer">
+        <input v-model="newItem" type="text" id="inputSearch" placeholder="Produkt">
+        <button @click="addItem">Hinzufügen</button>
+        <p>{{ newItem }}</p>
+    </div>  
+    
+    <div class="shopListItem" v-for="(item, index) in items" :key="index">
+        <h1>{{item}}</h1>
+        <button @click="removeItem(index)">löschen</button>
+    </div>
+    
+    `,
+    data() {
+        return {
+        title: "Einkaufsliste",
+        items: ["Milch", "Brot"],
+        newItem: ""
+    }
+    },
+
+    methods: {
+        addItem(){
+            const value = this.newItem.trim()
+            if (!value) return
+            this.items.push(value)
+            this.newItem = ""
+        },
+
+        removeItem(index){
+            this.items.splice(index, 1)
+        }
+    }
+
+});
+    
+    app.mount('#app');
+
+  </script>
+
+
+  <style>
+    .shopListItem{
+        background-color: rgba(0, 0, 0, 0.05);
+        margin: 25px;
+        padding: 10px;
+        border-radius: 10px;
+
+    }
+
+    #inputSearch{
+        background-color: rgba(0, 0, 0, 0.1);
+        margin: 25px;
+        padding: 10px;
+        border-radius: 8px;
+    }
+  </style>
+
+</body>
+</html>
