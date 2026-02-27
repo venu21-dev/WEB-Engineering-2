@@ -1,11 +1,24 @@
-<script setup>
+<script>
 import { computed } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
-import posts from '../data/posts'
+import { usePostStore } from '@/store'
 
-const route = useRoute()
+export default {
+  name: 'Post',
+  components: { RouterLink },
+  setup() {
+    const route = useRoute()
+    const store = usePostStore()
 
-const post = computed(() => posts.find((p) => p.id === route.params.id))
+    if (store.posts.length === 0) {
+      store.fetchPosts()
+    }
+
+    const post = computed(() => store.posts.find((p) => p.id === route.params.id))
+
+    return { post }
+  },
+}
 </script>
 
 <template>
